@@ -61,34 +61,42 @@ class LoginSystem {
     }
 
     // Xử lý đăng nhập
-    handleLogin() {
+    async handleLogin() {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
         if (!username || !password) {
             this.showMessage('Vui lòng nhập đầy đủ thông tin!', 'error');
             return;
         }
-        let users = JSON.parse(localStorage.getItem('users')) || [];
-        const userIndex = users.findIndex(u => u.username === username);
-        const user = users[userIndex];
-        if (!user || user.password !== password) {
-            this.showMessage('Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
-            return;
+        try {
+            const response = await fetch('https://sys.airobotic.edu.vn/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: username,
+                    password: password
+                })
+            });
+            const data = await response.json();
+            if (response.ok && data.success) {
+                // Lưu token hoặc thông tin nếu cần
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('currentUser', username);
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                }
+                this.showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'app.html';
+                }, 1000);
+            } else {
+                this.showMessage(data.message || 'Tên đăng nhập hoặc mật khẩu không đúng!', 'error');
+            }
+        } catch (error) {
+            this.showMessage('Không thể kết nối tới máy chủ. Vui lòng thử lại sau!', 'error');
         }
-        // Lưu lịch sử đăng nhập
-        const now = new Date().toISOString();
-        if (!user.firstLogin) user.firstLogin = now;
-        user.lastLogin = now;
-        user.loginCount = (user.loginCount || 0) + 1;
-        users[userIndex] = user;
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('currentUser', user.displayName);
-        localStorage.setItem('userRoles', JSON.stringify(user.roles || ['admin']));
-        this.showMessage('Đăng nhập thành công! Đang chuyển hướng...', 'success');
-        setTimeout(() => {
-            window.location.href = 'app.html';
-        }, 1000);
     }
 
     // Xử lý đăng ký
