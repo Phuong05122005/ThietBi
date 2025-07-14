@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quản lý Linh kiện</title>
+    
+    <!-- Meta tags cho chia sẻ -->
+    <meta property="og:title" content="Hệ thống Quản lý Linh kiện">
+    <meta property="og:description" content="Quản lý và sắp xếp linh kiện một cách hiệu quả">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Hệ thống Quản lý Linh kiện">
+    <meta name="twitter:description" content="Quản lý và sắp xếp linh kiện một cách hiệu quả">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-microchip"></i> Hệ thống Quản lý Linh kiện</h1>
+                    <p>Quản lý và sắp xếp linh kiện một cách hiệu quả</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span id="currentUserDisplay">Người dùng</span>
+                        <button id="logoutBtn" class="btn btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="search-section">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm linh kiện..." class="search-input">
+                <button type="button" id="searchClear" class="search-clear" title="Xóa tìm kiếm">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="multi-category-filter">
+                    <button type="button" id="categoryFilterBtn" class="category-filter-btn">
+                        <i class="fas fa-filter"></i>
+                        <span id="categoryFilterText">Tất cả chủ đề</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="action-buttons" id="actionButtons">
+                <button id="addComponentBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Thêm Linh kiện
+                </button>
+                <button id="quickAddBtn" class="btn btn-success">
+                    <i class="fas fa-bolt"></i> Thêm Nhanh
+                </button>
+                <button id="manageCategoriesBtn" class="btn btn-warning">
+                    <i class="fas fa-tags"></i> Quản lý Chủ đề
+                </button>
+                <button id="manageUsersBtn" class="btn btn-info" style="display: none;">
+                    <i class="fas fa-users-cog"></i> Quản lý Tài khoản
+                </button>
+                <button id="shareBtn" class="btn btn-secondary">
+                    <i class="fas fa-share-alt"></i> Chia sẻ
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Action Button for Mobile -->
+        <button id="fab" class="fab" title="Mở menu thao tác">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- Quick Actions for Mobile -->
+        <div class="quick-actions" id="quickActions">
+            <button class="quick-action-btn add" id="quickAddBtnMobile" title="Thêm nhanh">
+                <i class="fas fa-bolt"></i>
+            </button>
+            <button class="quick-action-btn quick" id="addComponentBtnMobile" title="Thêm linh kiện">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button class="quick-action-btn categories" id="manageCategoriesBtnMobile" title="Quản lý chủ đề">
+                <i class="fas fa-tags"></i>
+            </button>
+        </div>
+
+        <div class="status-tabs">
+            <button id="pendingTab" class="status-tab active">
+                <i class="fas fa-clock"></i> Chờ Kiểm tra
+                <span id="pendingCount" class="status-count">0</span>
+            </button>
+            <button id="checkedTab" class="status-tab">
+                <i class="fas fa-check-circle"></i> Đã Kiểm tra
+                <span id="checkedCount" class="status-count">0</span>
+            </button>
+            <button id="allTab" class="status-tab">
+                <i class="fas fa-list"></i> Tất cả
+                <span id="allCount" class="status-count">0</span>
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <i class="fas fa-microchip"></i>
+                <div>
+                    <h3 id="totalComponents">0</h3>
+                    <p>Tổng linh kiện</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-tags"></i>
+                <div>
+                    <h3 id="totalCategories">0</h3>
+                    <p>Chủ đề</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h3 id="totalStaff">0</h3>
+                    <p>Nhân viên</p>
+                </div>
+            </div>
+            <div class="stat-card clickable" id="userSetupCard">
+                <i class="fas fa-user-cog"></i>
+                <div>
+                    <h3 id="currentUserName">Thiết lập</h3>
+                    <p>Tên người dùng</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Merged Components Section -->
+        <div id="mergedComponentsSection" class="merged-components-section" style="display: none;">
+            <div class="merged-components-header">
+                <div class="merged-components-title">
+                    <i class="fas fa-layer-group"></i>
+                    Linh kiện đã gộp từ các chủ đề đã chọn
+                </div>
+                <div class="merged-components-count" id="mergedComponentsCount">0</div>
+            </div>
+            <div id="mergedComponentsList">
+                <!-- Merged components will be displayed here -->
+            </div>
+        </div>
+
+        <div class="components-grid" id="componentsGrid" style="display: none;">
+            <!-- Linh kiện sẽ được hiển thị ở đây -->
+        </div>
+    </div>
+
+    <!-- Modal thêm/sửa linh kiện -->
+    <div id="componentModal" class="modal">
+        <div class="modal-content component-modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Thêm Linh kiện Mới</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="componentForm">
+                <div class="form-layout">
+                    <div class="form-left">
+                <div class="form-group">
+                    <label for="componentName">Tên linh kiện:</label>
+                    <input type="text" id="componentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="componentCategory">Chủ đề:</label>
+                    <select id="componentCategory" required>
+                        <option value="">Chọn chủ đề</option>
+                        <option value="Điện tử">Điện tử</option>
+                        <option value="Cơ khí">Cơ khí</option>
+                        <option value="Máy tính">Máy tính</option>
+                        <option value="Điện thoại">Điện thoại</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                        <div class="form-row">
+                <div class="form-group">
+                    <label for="componentQuantity">Số lượng:</label>
+                    <input type="number" id="componentQuantity" min="0" required>
+                </div>
+                            <div class="form-group">
+                                <label for="componentPriority">Mức độ ưu tiên:</label>
+                                <select id="componentPriority">
+                                    <option value="Thấp">Thấp</option>
+                                    <option value="Trung bình" selected>Trung bình</option>
+                                    <option value="Cao">Cao</option>
+                                    <option value="Khẩn cấp">Khẩn cấp</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                <div class="form-group">
+                    <label for="componentPreparer">Người soạn:</label>
+                    <input type="text" id="componentPreparer" required>
+                </div>
+                <div class="form-group">
+                    <label for="componentInspector">Người kiểm tra:</label>
+                    <input type="text" id="componentInspector" required>
+                            </div>
+                </div>
+                <div class="form-group">
+                    <label for="componentDescription">Mô tả:</label>
+                            <textarea id="componentDescription" rows="3" placeholder="Mô tả chi tiết về linh kiện..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="componentLocation">Vị trí lưu trữ:</label>
+                            <input type="text" id="componentLocation" placeholder="Ví dụ: Kệ A, Ngăn 3">
+                        </div>
+                    </div>
+                    <div class="form-right">
+                        <div class="image-upload-section">
+                            <label for="componentImage">Hình ảnh linh kiện:</label>
+                            <div class="image-upload-area" id="imageUploadArea">
+                                <div class="upload-placeholder" id="uploadPlaceholder">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Nhấp để chọn hình ảnh</p>
+                                    <small>Hoặc kéo thả file vào đây</small>
+                                </div>
+                                <img id="imagePreview" class="image-preview" style="display: none;">
+                                <input type="file" id="componentImage" accept="image/*" style="display: none;">
+                            </div>
+                            <div class="image-controls" id="imageControls" style="display: none;">
+                                <button type="button" id="changeImageBtn" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i> Đổi ảnh
+                                </button>
+                                <button type="button" id="removeImageBtn" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Xóa ảnh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="component-info-preview">
+                            <h4>Thông tin nhanh:</h4>
+                            <div class="info-item">
+                                <span class="info-label">Trạng thái:</span>
+                                <span class="info-value status-pending">Chờ kiểm tra</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ngày tạo:</span>
+                                <span class="info-value" id="creationDate">Hôm nay</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Mã linh kiện:</span>
+                                <span class="info-value" id="componentCode">Tự động tạo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="component-modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="saveComponentBtn">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal thêm nhanh linh kiện -->
+    <div id="quickAddModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thêm Nhanh Linh kiện</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="quickAddForm">
+                <div class="form-group">
+                    <label for="quickComponentName">Tên linh kiện:</label>
+                    <input type="text" id="quickComponentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="quickComponentCategory">Chủ đề:</label>
+                    <select id="quickComponentCategory" required>
+                        <option value="">Chọn chủ đề</option>
+                        <option value="Điện tử">Điện tử</option>
+                        <option value="Cơ khí">Cơ khí</option>
+                        <option value="Máy tính">Máy tính</option>
+                        <option value="Điện thoại">Điện thoại</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quickComponentQuantity">Số lượng:</label>
+                    <input type="number" id="quickComponentQuantity" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="quickComponentPreparer">Người soạn (bạn):</label>
+                    <input type="text" id="quickComponentPreparer" required>
+                </div>
+                <div class="form-group">
+                    <label for="quickComponentInspector">Người kiểm tra:</label>
+                    <input type="text" id="quickComponentInspector" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelQuickBtn">Hủy</button>
+                    <button type="submit" class="btn btn-success">Thêm Nhanh</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal thiết lập người dùng -->
+    <div id="userSetupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thiết lập Tên Người dùng</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="userSetupForm">
+                <div class="form-group">
+                    <label for="userName">Tên của bạn:</label>
+                    <input type="text" id="userName" placeholder="Nhập tên của bạn" required>
+                    <small>Điều này sẽ được sử dụng làm tên mặc định khi thêm linh kiện nhanh</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelUserSetupBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal quản lý tài khoản -->
+    <div id="userManagementModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="account-management-header">
+                Quản lý Tài khoản
+                <span class="close">&times;</span>
+            </div>
+            <div class="account-management-body">
+                <div class="account-actions-row">
+                    <button id="addUserBtn" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Thêm Tài khoản
+                    </button>
+                    <button id="generateAllPasswordsBtn" class="btn btn-warning">
+                        <i class="fas fa-key"></i> Tạo Mật khẩu Cho Tất cả
+                    </button>
+                    <button id="accountManagerBtn" class="btn btn-info">
+                        <i class="fas fa-users"></i> Quản lý tài khoản
+                    </button>
+                </div>
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Tên hiển thị</th>
+                                <th>Vai trò</th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Danh sách tài khoản sẽ được hiển thị ở đây -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal thêm/sửa tài khoản -->
+    <div id="userFormModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="userFormTitle">Thêm Tài khoản Mới</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="newUsername">Tên đăng nhập:</label>
+                    <input type="text" id="newUsername" placeholder="Nhập tên đăng nhập" required>
+                    <small class="form-hint">Admin có thể đổi tên đăng nhập của tất cả tài khoản</small>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Mật khẩu:</label>
+                    <input type="password" id="newPassword" placeholder="Nhập mật khẩu" required>
+                </div>
+                <div class="form-group">
+                    <label for="newDisplayName">Tên hiển thị:</label>
+                    <input type="text" id="newDisplayName" placeholder="Nhập tên hiển thị" required>
+                </div>
+                <div class="form-group">
+                    <label for="newUserRoles">Vai trò:</label>
+                    <div class="roles-checkboxes">
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="preparer" id="rolePreparer">
+                            <span class="checkmark"></span>
+                            Người soạn linh kiện
+                        </label>
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="inspector" id="roleInspector">
+                            <span class="checkmark"></span>
+                            Người kiểm tra linh kiện
+                        </label>
+                        <label class="role-checkbox">
+                            <input type="checkbox" value="admin" id="roleAdmin">
+                            <span class="checkmark"></span>
+                            Quản trị viên
+                        </label>
+                    </div>
+                    <small>Chọn một hoặc nhiều vai trò cho người dùng</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelUserFormBtn">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal quản lý chủ đề -->
+    <div id="categoryManagementModal" class="modal">
+        <div class="modal-content">
+            <div class="category-management-header">
+                Quản lý Chủ đề
+                <span class="close">&times;</span>
+            </div>
+            <div class="category-management-body">
+                <div class="category-add-row">
+                    <input type="text" id="newCategoryName" placeholder="Nhập tên chủ đề mới">
+                    <button id="addCategoryBtn">
+                        <i class="fas fa-plus"></i> Thêm Chủ đề
+                    </button>
+                </div>
+                <span class="category-list-label">Danh sách chủ đề hiện có:</span>
+                <div id="categoriesList" class="categories-container">
+                    <!-- Danh sách chủ đề sẽ được hiển thị ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xác nhận tạo mật khẩu cho tất cả -->
+    <div id="generateAllPasswordsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Xác nhận Tạo Mật khẩu</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle" style="color: #ffc107; font-size: 2rem; margin-bottom: 15px;"></i>
+                    <h3>Cảnh báo!</h3>
+                    <p>Bạn sắp tạo mật khẩu mới cho <strong>TẤT CẢ</strong> tài khoản trong hệ thống.</p>
+                    <p>Điều này sẽ:</p>
+                    <ul>
+                        <li>Thay đổi mật khẩu của tất cả người dùng</li>
+                        <li>Đăng xuất tất cả người dùng đang đăng nhập</li>
+                        <li>Yêu cầu người dùng đăng nhập lại với mật khẩu mới</li>
+                    </ul>
+                    <p><strong>Bạn có chắc chắn muốn tiếp tục không?</strong></p>
+                </div>
+                
+                <div class="password-options">
+                    <h4>Tùy chọn mật khẩu:</h4>
+                    <div class="form-group">
+                        <label for="passwordLength">Độ dài mật khẩu:</label>
+                        <select id="passwordLength" class="form-control">
+                            <option value="6">6 ký tự</option>
+                            <option value="8" selected>8 ký tự</option>
+                            <option value="10">10 ký tự</option>
+                            <option value="12">12 ký tự</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="passwordPattern">Mẫu mật khẩu:</label>
+                        <select id="passwordPattern" class="form-control">
+                            <option value="mixed" selected>Chữ và số (A-Z, a-z, 0-9)</option>
+                            <option value="alphanumeric">Chữ số và ký tự đặc biệt (A-Z, a-z, 0-9, !@#$%)</option>
+                            <option value="numeric">Chỉ số (0-9)</option>
+                            <option value="alphabetic">Chỉ chữ (A-Z, a-z)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelGeneratePasswordsBtn">Hủy</button>
+                <button type="button" class="btn btn-warning" id="confirmGeneratePasswordsBtn">
+                    <i class="fas fa-key"></i> Tạo Mật khẩu Cho Tất cả
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal hiển thị kết quả tạo mật khẩu -->
+    <div id="passwordResultsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>Kết quả Tạo Mật khẩu</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="success-message">
+                    <i class="fas fa-check-circle" style="color: #28a745; font-size: 2rem; margin-bottom: 15px;"></i>
+                    <h3>Đã tạo mật khẩu thành công!</h3>
+                    <p>Mật khẩu mới đã được tạo cho tất cả tài khoản. Vui lòng lưu lại thông tin này và thông báo cho người dùng.</p>
+                </div>
+                
+                <div class="password-results">
+                    <h4>Danh sách tài khoản và mật khẩu mới:</h4>
+                    <div class="password-table-container">
+                        <table class="password-table">
+                            <thead>
+                                <tr>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Tên hiển thị</th>
+                                    <th>Mật khẩu mới</th>
+                                    <th>Vai trò</th>
+                                </tr>
+                            </thead>
+                            <tbody id="passwordResultsTableBody">
+                                <!-- Kết quả mật khẩu sẽ được hiển thị ở đây -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="export-options">
+                    <h4>Tùy chọn xuất:</h4>
+                    <button id="copyPasswordsBtn" class="btn btn-primary">
+                        <i class="fas fa-copy"></i> Sao chép Danh sách
+                    </button>
+                    <button id="downloadPasswordsBtn" class="btn btn-success">
+                        <i class="fas fa-download"></i> Tải xuống CSV
+                    </button>
+                </div>
+                
+                <div class="important-notice">
+                    <h4><i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i> Lưu ý quan trọng:</h4>
+                    <ul>
+                        <li>Tất cả người dùng đã bị đăng xuất khỏi hệ thống</li>
+                        <li>Người dùng cần đăng nhập lại với mật khẩu mới</li>
+                        <li>Vui lòng thông báo mật khẩu mới cho từng người dùng một cách an toàn</li>
+                        <li>Khuyến nghị người dùng đổi mật khẩu sau khi đăng nhập lần đầu</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="closePasswordResultsBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chia sẻ -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Chia sẻ Hệ thống</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <div class="share-link">
+                        <label>Đường link chia sẻ:</label>
+                        <div class="link-container">
+                            <input type="text" id="shareLink" readonly>
+                            <button id="copyLinkBtn" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Sao chép
+                            </button>
+                        </div>
+                    </div>
+                    <div class="share-buttons">
+                        <button id="shareFacebookBtn" class="btn btn-facebook">
+                            <i class="fab fa-facebook"></i> Facebook
+                        </button>
+                        <button id="shareTwitterBtn" class="btn btn-twitter">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </button>
+                        <button id="shareLinkedInBtn" class="btn btn-linkedin">
+                            <i class="fab fa-linkedin"></i> LinkedIn
+                        </button>
+                        <button id="shareEmailBtn" class="btn btn-email">
+                            <i class="fas fa-envelope"></i> Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xác nhận xóa -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Xác nhận xóa</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa linh kiện này không?</p>
+                <p id="deleteComponentName"></p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chọn chủ đề -->
+    <div id="categoryFilterModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Chọn chủ đề (có thể chọn nhiều)</h2>
+                <span class="close" id="closeCategoryFilterModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <button type="button" id="selectAllCategories" class="btn-link">Chọn tất cả</button>
+                <div class="category-checkboxes" id="categoryCheckboxes">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelCategoryFilter">Hủy</button>
+                <button type="button" class="btn btn-primary" id="applyCategoryFilter"><i class="fas fa-check"></i> Áp dụng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal quản lý tài khoản đăng nhập -->
+    <div id="accountManagerModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>Quản lý tài khoản đăng nhập</h2>
+                <span class="close" id="closeAccountManagerModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Tên đăng nhập</th>
+                            <th>Mật khẩu</th>
+                            <th>Tên hiển thị</th>
+                            <th>Vai trò</th>
+                            <th>Lần đầu đăng nhập</th>
+                            <th>Lần cuối đăng nhập</th>
+                            <th>Số lần truy cập</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accountManagerTableBody">
+                        <!-- Dữ liệu tài khoản sẽ được render ở đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
