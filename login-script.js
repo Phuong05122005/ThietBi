@@ -139,41 +139,53 @@ class LoginSystem {
     }
 }
 
-// Hàm đăng nhập bằng username/password, lưu trên localStorage
-function login(username, password) {
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
-  if (users.find(u => u.username === username && u.password === password)) {
-    alert('Đăng nhập thành công!');
-  } else {
-    alert('Sai tài khoản hoặc mật khẩu!');
-  }
-}
+// Đăng nhập qua API, lưu email vào localStorage nếu status == 2
 
-// Gắn sự kiện submit cho form đăng nhập
-const loginForm = document.getElementById('loginForm');
-if (loginForm) {
-  loginForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    login(username, password);
-  });
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('username').value.trim(); // Changed from 'email' to 'username'
+            const password = document.getElementById('password').value;
+            if (!email || !password) {
+                showMessage('Vui lòng nhập đầy đủ thông tin!', 'error');
+                return;
+            }
+            try {
+                const response = await fetch('https://sys.airobotic.edu.vn/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (data.status === 2) {
+                    localStorage.setItem('loggedInEmail', email);
+                    showMessage('Đăng nhập thành công!', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'app.html';
+                    }, 1000);
+                } else {
+                    showMessage(data.message || 'Sai thông tin đăng nhập!', 'error');
+                }
+            } catch (error) {
+                showMessage('Có lỗi xảy ra: ' + error.message, 'error');
+            }
+        });
+    }
 
-// Hàm đăng ký tài khoản
-function register(username, password) {
-  let users = JSON.parse(localStorage.getItem('users') || '[]');
-  if (users.find(u => u.username === username)) {
-    alert('Tài khoản đã tồn tại!');
-    return;
-  }
-  users.push({ username, password });
-  localStorage.setItem('users', JSON.stringify(users));
-  alert('Đăng ký thành công!');
-}
-
-// Khởi tạo hệ thống đăng nhập nhiều tài khoản
-let loginSystem;
-document.addEventListener('DOMContentLoaded', () => {
-    loginSystem = new LoginSystem();
+    // Hàm hiển thị modal thông báo
+    function showMessage(msg, type) {
+        const messageModal = document.getElementById('messageModal');
+        const messageTitle = document.getElementById('messageTitle');
+        const messageText = document.getElementById('messageText');
+        messageTitle.textContent = type === 'error' ? 'Lỗi' : 'Thông báo';
+        messageText.textContent = msg;
+        messageModal.style.display = 'block';
+        document.getElementById('messageOkBtn').onclick = () => {
+            messageModal.style.display = 'none';
+        };
+    }
 });
