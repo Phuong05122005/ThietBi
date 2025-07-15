@@ -52,21 +52,36 @@ body {
     margin-bottom: 18px;
 }
 
-#loginForm input[type="email"],
-#loginForm input[type="password"] {
-    padding: 12px 14px;
+/* Input với icon bên trái */
+.input-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.input-icon i {
+    position: absolute;
+    left: 16px;
+    color: #b39ddb;
+    font-size: 1.1rem;
+    pointer-events: none;
+    transition: color 0.2s;
+}
+.input-icon input {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
     border: 1.5px solid #e0e0e0;
     border-radius: 8px;
     font-size: 1rem;
     outline: none;
-    transition: border 0.2s;
     background: #fafaff;
+    box-shadow: 0 2px 8px rgba(123,47,242,0.04);
+    transition: border 0.2s, box-shadow 0.2s;
 }
-
-#loginForm input[type="email"]:focus,
-#loginForm input[type="password"]:focus {
+.input-icon input:focus {
     border: 1.5px solid #7b2ff2;
     background: #fff;
+    box-shadow: 0 4px 16px rgba(123,47,242,0.10);
 }
 
 #loginForm button[type="submit"] {
