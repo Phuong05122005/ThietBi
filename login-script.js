@@ -163,12 +163,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const data = await response.json();
                 if (data.status === 2) {
                     localStorage.setItem('loggedInEmail', email);
-                    showMessage('Đăng nhập thành công!', 'success');
+                    showMessage(data.mes || 'Đăng nhập thành công!', 'success');
                     setTimeout(() => {
                         window.location.href = 'app.html';
                     }, 1000);
                 } else {
-                    showMessage(data.message || 'Sai thông tin đăng nhập!', 'error');
+                    showMessage(data.mes || 'Sai thông tin đăng nhập!', 'error');
                 }
             } catch (error) {
                 showMessage('Có lỗi xảy ra: ' + error.message, 'error');
