@@ -12,7 +12,7 @@ class ComponentManager {
     }
 
     init() {
-        this.checkAuth();
+        // Đã xóa checkAuth để bỏ kiểm tra đăng nhập
         this.setupEventListeners();
         this.updateCategoryDropdowns();
         this.renderComponents();
@@ -20,16 +20,7 @@ class ComponentManager {
         this.updateUserDisplay();
         this.loadSampleData();
         this.checkUserRoles();
-        
         document.getElementById('componentsGrid').style.display = 'none';
-    }
-
-    checkAuth() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if (!isLoggedIn) {
-            window.location.href = 'login.html';
-            return;
-        }
     }
 
     // ... (keep all other methods the same, just remove any Apps Script specific code)
