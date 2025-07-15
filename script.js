@@ -46,4 +46,34 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // Hiện modal thêm nhanh linh kiện khi bấm nút
+    const quickAddBtn = document.getElementById('quickAddBtn');
+    const quickAddModal = document.getElementById('quickAddModal');
+    if (quickAddBtn && quickAddModal) {
+        quickAddBtn.addEventListener('click', function() {
+            quickAddModal.style.display = 'block';
+        });
+        // Đóng modal khi bấm dấu X hoặc nút Hủy
+        quickAddModal.querySelectorAll('.close, #cancelQuickBtn').forEach(function(el) {
+            el.addEventListener('click', function() {
+                quickAddModal.style.display = 'none';
+            });
+        });
+    }
+
+    // Hiện modal quản lý chủ đề khi bấm nút
+    const manageCategoriesBtn = document.getElementById('manageCategoriesBtn');
+    const categoryManagementModal = document.getElementById('categoryManagementModal');
+    if (manageCategoriesBtn && categoryManagementModal) {
+        manageCategoriesBtn.addEventListener('click', function() {
+            categoryManagementModal.style.display = 'block';
+        });
+        // Đóng modal khi bấm dấu X hoặc nút Hủy
+        categoryManagementModal.querySelectorAll('.close, #cancelCategoryFilter, #addCategoryBtn').forEach(function(el) {
+            el.addEventListener('click', function() {
+                categoryManagementModal.style.display = 'none';
+            });
+        });
+    }
 });
