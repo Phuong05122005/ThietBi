@@ -31,4 +31,19 @@ class ComponentManager {
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new ComponentManager();
+
+    // Hiện modal thêm linh kiện khi bấm nút
+    const addComponentBtn = document.getElementById('addComponentBtn');
+    const componentModal = document.getElementById('componentModal');
+    if (addComponentBtn && componentModal) {
+        addComponentBtn.addEventListener('click', function() {
+            componentModal.style.display = 'block';
+        });
+        // Đóng modal khi bấm dấu X hoặc nút Hủy
+        componentModal.querySelectorAll('.close, #cancelBtn').forEach(function(el) {
+            el.addEventListener('click', function() {
+                componentModal.style.display = 'none';
+            });
+        });
+    }
 });
